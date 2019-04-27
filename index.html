@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Plantilla base</title>
+	<script type="text/javascript" src="resources/three.min.js"></script>
+	<script type="text/javascript" src="resources/jquery-2.1.1.js"></script>
+	<script type="text/javascript" src="resources/stats.js"></script>
+	<script type="text/javascript" src="resources/dat.gui.js"></script>
+	<script type="text/javascript" src="resources/OrbitControls.js"></script>
+	<style type="text/css">
+		body{
+			margin: 0;
+			overflow: hidden;
+		}
+	</style>
+</head>
+<body>
+<div id="webGL-salida"></div>
+<div id="stats-salida"></div>
+
+<script type="text/javascript">
+	// crea los controles para dat.gui
+	var controls = new function(){
+		this.rotationSpeed = 0.02;
+		this.bouncingSpeed = 0.03;
+	}
+
+	$(function(){
+
+		var stats = initStats();
+
+		// se añade una escena, una camara y un renderer
+		var scene = new THREE.Scene();
+		var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+		var renderer = new THREE.WebGLRenderer(); // hay otros renders, pero son menos aconsejables de momento
+
+		// se setea un color de fondo y un tamaño
+		renderer.setClearColor(0xEEEEEE);
+		renderer.setSize(window.innerWidth, window.innerHeight);
+		renderer.ShadowMapEnabled = true;
+
+		controles = new THREE.OrbitControls(camera, renderer.domElement);
+
+		// se crean los ejes y se agregan a la escena
+		var axes = new THREE.AxisHelper(20);
+		scene.add(axes);
+
+		// crea el plano del suelo
+		var planeGeometry = new THREE.PlaneGeometry(120, 120);
+		var planeMaterial = new THREE.MeshBasicMaterial({color:0xCCCCCC});
+		var plane = new THREE.Mesh(planeGeometry, planeMaterial);
+
+		plane.receiveShadow = true;
+
+		// rota y posiciona el plano
+		plane.rotation.x = -0.5*Math.PI;
+		plane.position.x = 5;
+		plane.position.y = 0;
+		plane.rotation.z= 0;
+
+
+
+		// añade el plano a la escena
+		scene.add(plane);
+
+
+
+		// crea un cubo con lambermaterial que SI tiene en cuenta los puntos de luz
+
+		var cubeGeometry = new THREE.SphereGeometry(5,20,8);
+		var cylin1Geometry = new THREE.CylinderGeometry(10,10,10);
+		var cylin2Geometry = new THREE.CylinderGeometry(5,10,5);
+		var cuerpoGeometry = new THREE.CubeGeometry(10,10,10);
+		var cabezaGeometry = new THREE.SphereGeometry(3,7,4);
+		var cylin3Geometry = new THREE.CylinderGeometry(5,5,30);
+		var cylin4Geometry = new THREE.CylinderGeometry(0.1,10,50);
+		var copasombreroGeometry = new THREE.CircleGeometry(4,5,24);
+
+
+
+
+
+
+		// var cubeMaterial = new THREE.MeshBasicMaterial({color:0xff0000, wireframe:true}); // este diseño es lineal simple no soporta luces
+
+		var cubeMaterial = new THREE.MeshLambertMaterial({color:0x7777ff});
+		var cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
+
+		var cuerpoMaterial = new THREE.MeshLambertMaterial({color:0x7777ff});
+		var cuerpo = new THREE.Mesh(cuerpoGeometry, cuerpoMaterial);
+
+
+		var cylin1Material = new THREE.MeshLambertMaterial({color:0x7777ff});
+		var cylin1 = new THREE.Mesh(cylin1Geometry, cylin1Material);
+
+		var cylin2Material = new THREE.MeshLambertMaterial({color:0x7777ff});
+		var cylin2 = new THREE.Mesh(cylin2Geometry, cylin2Material);
+
+		var cylin3Material = new THREE.MeshLambertMaterial({color:0x7777ff});
+		var cylin3 = new THREE.Mesh(cylin3Geometry, cylin3Material);
+
+		var cylin4Material = new THREE.MeshLambertMaterial({color:0x7777ff});
+		var cylin4 = new THREE.Mesh(cylin4Geometry, cylin4Material);
+
+		var copasombreroMaterial = new THREE.MeshLambertMaterial({color:0x7777ff});
+		var copasombrero = new THREE.Mesh(copasombreroGeometry, copasombreroMaterial);
+
+
+
+		var cabezaMaterial = new THREE.MeshLambertMaterial({color:0x7777ff});
+		var cabeza = new THREE.Mesh(cabezaGeometry, cabezaMaterial);
+
+
+
+		cube.castShadow = true;
+		cylin1.castShadow = true;
+		cylin2.castShadow = true;
+		cylin3.castShadow = true;
+		cylin4.castShadow = true;
+		cuerpo.castShadow = true;
+		cabeza.castShadow = true;
+		copasombrero.castShadow = true;
+
+
+
+
+		cube.position.x = 6;
+		cube.position.y = 26;
+		cube.position.z = 6;
+
+		cylin1.position.x = 6;
+		cylin1.position.y = 4;
+		cylin1.position.z = 30;
+
+		cylin2.position.x = 30;
+		cylin2.position.y = 4;
+		cylin2.position.z = 30;
+
+		cylin3.rotation.x = 0 * Math.PI;
+		cylin3.rotation.Y = 0 * Math.PI;
+		cylin3.position.x = 1;
+		cylin3.position.y = 25;
+		cylin3.position.z = 50;
+
+
+		cylin4.rotation.x = 0 * Math.PI;
+		cylin4.rotation.Y = 0 * Math.PI;
+		cylin4.position.x = -10;
+		cylin4.position.y = 25;
+		cylin4.position.z = -50;
+
+		cuerpo.position.x = -1;
+		cuerpo.position.y = 4;
+		cuerpo.position.z = -30;
+
+		cabeza.position.x = 0;
+		cabeza.position.y = 4;
+		cabeza.position.z = -10;
+
+		copasombrero.position.x = -10;
+		copasombrero.position.y = 10;
+		copasombrero.position.z = 0;
+		copasombrero.rotation.x = 0 * Math.PI;
+
+
+
+
+
+		// añade el cubo a la escena
+		scene.add(cube);
+		scene.add(cylin1);
+		scene.add(cylin2);
+		scene.add(cylin3);
+		scene.add(cuerpo);
+		scene.add(cabeza);
+		scene.add(cylin4);
+		scene.add(copasombrero);
+
+
+
+
+
+
+
+		// crea una esfera
+
+		var sphereGeometry = new THREE.SphereGeometry(4,20,20);
+		// var sphereMaterial = new THREE.MeshBasicMaterial({color:0xff0000, wireframe:true}); // este diseño es lineal simple no soporta luces
+		var sphereMaterial = new THREE.MeshLambertMaterial({color:0x7777ff});
+		var sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
+
+		sphere.castShadow = true;
+
+		// posiciona la esfera
+		sphere.position.x = 50;
+		sphere.position.y = 10;
+		sphere.position.z = 9;
+
+		// añade la esfera a la escena
+		scene.add(sphere);
+
+
+		// posiciona y apunta la camara dentro de la escena
+		camera.position.x = -30;
+		camera.position.y = 45;
+		camera.position.z = 70;
+		camera.lookAt(scene.position);
+
+
+		// añade spotlight para luz
+		var spotLight =new THREE.SpotLight(0xffffff);
+		spotLight.position.set(-40,60,-10);
+		scene.add(spotLight);
+
+
+		// añadir la salida de la renderizacion al elemento html
+		$('#webGL-salida').append(renderer.domElement);
+		render();
+
+
+
+
+
+
+		/*var gui = new dat.GUI();
+		gui.add(controls, 'rotationSpeed', 0, 0.5);
+		gui.add(controls, 'bouncingSpeed', 0, 0.5);
+*/
+
+
+
+		var step = 0;
+		function render(){
+			stats.update();
+
+
+
+			cube.rotation.x += controls.rotationSpeed;
+			cube.rotation.y += controls.rotationSpeed;
+			cube.rotation.z += controls.rotationSpeed;
+
+			step += controls.bouncingSpeed;
+			sphere.position.x = -10+(10*(Math.cos(step)));
+			sphere.position.y = 2+(10*Math.abs(Math.sin(step)));
+
+			requestAnimationFrame(render); // el sustituto mejorado de setInterval para renderizar
+			renderer.render(scene, camera);
+		}
+
+
+
+		function initStats(){
+			var stats = new Stats();
+			stats.setMode(0); // 0: fps, 1: ms
+
+			// top left
+			stats.domElement.style.position = 'absolute';
+			stats.domElement.style.left = '0px';
+			stats.domElement.style.top = '0px';
+
+			$('#stats-salida').append(stats.domElement);
+
+			return stats;
+		}
+
+
+
+	});
+</script>
+
+</body>
+</html>
